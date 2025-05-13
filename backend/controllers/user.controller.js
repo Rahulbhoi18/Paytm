@@ -45,7 +45,7 @@ export const signin = async (req, res) => {
     const { success } = signinBody.safeParse(req.body);
     if (!success) {
       return res
-        .staus(400)
+        .status(400)
         .json("Input is wrong or user already exit with this username");
     }
     const username = req.body.username;
@@ -56,7 +56,7 @@ export const signin = async (req, res) => {
     }
     const userId = user._id;
 
-    const correctPassword = await bcrypt.compare(password , user.password);
+    const correctPassword = await bcrypt.compare(password, user.password);
     if (!correctPassword) {
       return res.status(400).json("Password is incorrect");
     }
@@ -79,8 +79,8 @@ export const updateUser = async (req, res) => {
   try {
     const userId = req.userId;
     const { success } = updateBody.safeParse(req.body);
-    if(!success){
-      return res.status(403).json("Wrong inputs")
+    if (!success) {
+      return res.status(403).json("Wrong inputs");
     }
     const password = req.body.password;
     const firstName = req.body.firstName;
@@ -114,7 +114,7 @@ export const getUsers = async (req, res) => {
       ],
     });
 
-    res.json({
+    return res.json({
       user: users.map((user) => ({
         username: user.username,
         firstName: user.firstName,
@@ -124,5 +124,16 @@ export const getUsers = async (req, res) => {
     });
   } catch (error) {
     console.log("Error while getting the users", error);
+  }
+};
+
+export const getUser = async (req, res) => {
+  try {
+    const user = await User.findOne({
+      _id: req.userId,
+    });
+    res.json(user);
+  } catch (error) {
+    console.log(error);
   }
 };
